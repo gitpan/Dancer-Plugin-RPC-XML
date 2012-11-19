@@ -8,7 +8,7 @@ use Dancer::Exception ':all';
 use Dancer::Plugin;
 use RPC::XML;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 register 'xmlrpc' => \&xmlrpc;
 register 'xmlrpc_fault' => \&xmlrpc_fault;
@@ -97,7 +97,7 @@ Dancer::Plugin::RPC::XML - A plugin for Dancer to wrap XML-RPC calls
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =head1 SYNOPSIS
 
@@ -173,9 +173,9 @@ L<http://search.cpan.org/dist/Dancer-Plugin-RPC-XML/>
 
 =head1 ACKNOWLEDGEMENTS
 
- * Thanks to Randy J Ray (RJRAY) for the wonderful RPC::XML module
+=item * Thanks to Randy J Ray (RJRAY) for the wonderful RPC::XML module
  
- * Thanks to the Dancer project for creating an alternative to CGI!
+=item * Thanks to the Dancer project for creating an alternative to CGI!
 
 =head1 COPYRIGHT & LICENSE
 

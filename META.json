@@ -32,10 +32,13 @@
       },
       "runtime" : {
          "requires" : {
+            "Dancer" : "0",
+            "Dancer::Plugin" : "0",
+            "RPC::XML" : "0",
             "Test::More" : "0"
          }
       }
    },
    "release_status" : "stable",
-   "version" : "0.02"
+   "version" : "0.03"
 }
