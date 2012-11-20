@@ -7,8 +7,9 @@ use Dancer ':syntax';
 use Dancer::Exception ':all';
 use Dancer::Plugin;
 use RPC::XML;
+use RPC::XML::ParserFactory;
 
-our $VERSION = '0.04';
+our $VERSION = '0.06';
 
 register 'xmlrpc' => \&xmlrpc;
 register 'xmlrpc_fault' => \&xmlrpc_fault;
@@ -38,11 +39,15 @@ sub xmlrpc {
   
     # parse the request body
     my $xml = request->body;
-    my $reqobj = RPC::XML::ParserFactory->new()->parse( ${$xml} );
+		
+    return RPC::XML::response->new(
+      RPC::XML::fault->new(-1,  "XML parse failure - empty"))->as_string if ( !$xml || $xml =~ /^\s?$/ );
+	
+    my $reqobj = RPC::XML::ParserFactory->new()->parse( $xml );
   
     if ( not ref $reqobj ) {
       return RPC::XML::response->new(
-        RPC::XML::fault->new(200,  "XML parse failure: $reqobj"))->as_string;
+        RPC::XML::fault->new(-2,  "XML parse failure: $reqobj"))->as_string;
     }
   
     my @data = @{$reqobj->args};
@@ -67,7 +72,12 @@ sub xmlrpc {
     setting('layout' => $layout);
 
     # wrap the response in xml with RPC::XML
-    return RPC::XML::response->new( $response )->as_string;
+		if ( ref $response ne 'RPC::XML::response' ) {
+    	return RPC::XML::response->new( $response )->as_string;
+		}
+		else {
+		 	return $response->as_string;
+		}
   };
 
   # rebuild the @rest array with the compiled route handler
@@ -81,11 +91,12 @@ sub xmlrpc {
     }
   }
  
-  any ['get', 'post'] => $pattern, @compiled_rest;
+  any ['post'] => $pattern, @compiled_rest;
+	#any ['get', 'post'] => $pattern, @compiled_rest;
 }
 
 sub xmlrpc_fault {
-  return RPC::XML::response->new(RPC::XML::fault->new( @_ ))->as_string;
+  return RPC::XML::response->new(RPC::XML::fault->new( @_ ));
 };
 
 register_plugin;
@@ -97,7 +108,7 @@ Dancer::Plugin::RPC::XML - A plugin for Dancer to wrap XML-RPC calls
 
 =head1 VERSION
 
-Version 0.04
+Version 0.06
 
 =head1 SYNOPSIS
 
@@ -125,13 +136,12 @@ Quick summary of what the module does.
 
 =head2 xmlrpc
  
- Route handler for xmlrpc routes. Unwraps requests and re-wraps responses in xml using
- the RPC::XML module.
+Route handler for xmlrpc routes. Unwraps requests and re-wraps responses in xml using
+the RPC::XML module.
 
 =head2 xmlrpc_fault( $faultCode, $faultString )
 
- Returns xmlrpc fault xml
- 
+Returns xmlrpc fault xml
 
 =head1 AUTHOR
 
@@ -173,9 +183,13 @@ L<http://search.cpan.org/dist/Dancer-Plugin-RPC-XML/>
 
 =head1 ACKNOWLEDGEMENTS
 
+=over
+
 =item * Thanks to Randy J Ray (RJRAY) for the wonderful RPC::XML module
  
 =item * Thanks to the Dancer project for creating an alternative to CGI!
+
+=back
 
 =head1 COPYRIGHT & LICENSE
 

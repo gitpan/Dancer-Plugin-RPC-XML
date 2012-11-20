@@ -20,6 +20,6 @@ no_index:
 requires:
   Dancer: 0
   Dancer::Plugin: 0
-  RPC::XML: 0
+  RPC::XML: 0.69
   Test::More: 0
-version: 0.04
+version: 0.06

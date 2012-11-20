@@ -13,7 +13,7 @@ WriteMakefile(
     PL_FILES            => {},
     PREREQ_PM => {
         'Test::More' => 0,
-        'RPC::XML' => 0,
+        'RPC::XML' => 0.69,
         'Dancer' => 0,
         'Dancer::Plugin' => 0,
     },
